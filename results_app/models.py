@@ -10,11 +10,9 @@ class DetectionResult(Base):
     __tablename__ = "detection_results"
 
     id = Column(Integer, primary_key=True, index=True)
-    video_url = Column(String, nullable=False)
-    task_id = Column(String, nullable=False)
+    task_id = Column(UUID(as_uuid=True))
     status = Column(Enum(DetectionStatus), default=DetectionStatus.PROCESSING)
-    # result = Column(JSON, default=[])
-    result = Column(JSON, nullable=True)
+    result = Column(JSON, default=list)
     user_id = Column(UUID(as_uuid=True), ForeignKey(User.id))
 
     user = relationship("User", back_populates="detection_results")
