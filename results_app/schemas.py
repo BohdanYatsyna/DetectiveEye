@@ -1,25 +1,28 @@
-from typing import Optional, List
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
+from typing import Optional
+from uuid import UUID
+
+from results_app.enums import DetectionStatus
 
 
 class DetectionResultBase(BaseModel):
-    video_url: HttpUrl
+    task_id: UUID
+    status: DetectionStatus
+    result: Optional[list] = []
 
 
 class DetectionResultCreate(DetectionResultBase):
     pass
 
 
-class DetectionResultUpdate(BaseModel):
-    status: Optional[str]
-    result: Optional[list]
+class DetectionResultUpdate(DetectionResultBase):
+    status: DetectionStatus
+    result: Optional[list] = None
 
 
 class DetectionResult(DetectionResultBase):
     id: int
-    task_id: str
-    status: str
-    result: Optional[str]  # JSON stored as string, convert to actual JSON when reading
+    user_id: UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True
