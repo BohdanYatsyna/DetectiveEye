@@ -1,14 +1,17 @@
 import shutil
 import os
 
+from celery import chain
 from fastapi import (
-    APIRouter, Depends, HTTPException, File, UploadFile, BackgroundTasks
+    APIRouter, Depends, HTTPException, File, UploadFile
 )
 from fastapi_users import FastAPIUsers
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 
-from celery_worker.worker import process_video_task
+from celery_worker.worker import (
+    process_video_task, update_detection_result_task
+)
 from db.database import get_async_session
 from results_app import crud, schemas
 from service.utils import get_video_paths, get_file_extension
@@ -37,14 +40,16 @@ async def upload_video_for_detecting_objects(
         )
 
     frames_path, video_path, video_folder_path = get_video_paths()
-    upload_video_to_temp_folder(video_file, video_path)
+    await upload_video_to_temp_folder(video_file, video_path)
 
-    task = process_video_task.delay(
-        frames_path, video_path, video_folder_path
+    task_chain = chain(
+        process_video_task.s(frames_path, video_path, video_folder_path),
+        update_detection_result_task.s()
     )
+    result = task_chain.apply_async()
 
     new_detection_result = await crud.create_detection_result(
-        db, task_id=task.id, user_id=user.id
+        db, task_id=result.parent.id, user_id=user.id
     )
 
     return new_detection_result
@@ -79,29 +84,3 @@ async def read_result(
         )
 
     return db_result
-
-
-@results_router.put(
-    "/results/{task_id}", response_model=schemas.DetectionResult
-)
-async def update_result(
-    task_id: UUID,
-    detection_result_update: schemas.DetectionResultUpdate,
-    db: AsyncSession = Depends(get_async_session),
-    user: User = Depends(current_active_user)
-):
-    existing_result = await crud.get_detection_result(db, task_id)
-    if not existing_result or existing_result.user_id != user.id:
-        raise HTTPException(
-            status_code=404,
-            detail="Result not found or not owned by the user"
-        )
-
-    updated_result = await crud.update_detection_result(
-        db, task_id, detection_result_update
-    )
-
-    if not updated_result:
-        raise HTTPException(status_code=404, detail="Result not found")
-
-    return updated_result
