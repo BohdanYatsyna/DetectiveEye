@@ -1,5 +1,3 @@
-import time
-
 from celery import Celery
 from fastapi import UploadFile
 
@@ -37,10 +35,11 @@ def process_video_task(
 @app.task
 def update_detection_result_task(
         task_result: dict
-) -> None:
+) -> str:
 
     with get_sync_session() as db:
         error = task_result.get("error")
+        task_id = task_result.get("task_id")
 
         if error:
             status = DetectionStatus.FAILURE
@@ -49,4 +48,6 @@ def update_detection_result_task(
             status = DetectionStatus.SUCCESS
             result = task_result.get("frame_paths")
 
-        update_detection_result_with_celery(db, task_result.get("task_id"), status, result)
+        update_detection_result_with_celery(db, task_id, status, result)
+
+    return f"DetectionResult with task_id: '{task_id}' updated successfully"
