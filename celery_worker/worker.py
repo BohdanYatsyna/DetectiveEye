@@ -50,19 +50,3 @@ def update_detection_result_task(
             result = task_result.get("frame_paths")
 
         update_detection_result_with_celery(db, task_result.get("task_id"), status, result)
-
-
-# @app.task(bind=True)
-# def process_video_task(
-#         self, frames_path: str, video_path: str, video_folder_path: str
-# ):
-#     # time.sleep(10)
-#
-#     frame_paths = split_video_into_frames(video_path, frames_path)
-#     clean_up_processed_files(video_folder_path)
-#
-#     task_id = self.request.id
-#     print(task_id)
-#
-#
-#     return task_id, frame_paths
