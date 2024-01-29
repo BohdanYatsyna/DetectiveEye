@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from core.settings import settings
+from settings import settings
 from fastapi import UploadFile
 
 
