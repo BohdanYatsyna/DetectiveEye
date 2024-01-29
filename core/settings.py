@@ -17,8 +17,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-
-# if __name__ == "__main__":
-#     print(f"Root Directory: {settings.ROOT_DIR}")
-#     print(f"MEDIA_TEMP Directory: {settings.MEDIA_TEMP}")
