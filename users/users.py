@@ -11,15 +11,13 @@ from fastapi_users.authentication import (
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from db.database import get_user_db
+from settings import settings
 from users.models import User
 
 
-TOKEN_SECRET = "SECRET"  # TODO: change to env
-
-
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
-    reset_password_token_secret = TOKEN_SECRET
-    verification_token_secret = TOKEN_SECRET
+    reset_password_token_secret = settings.TOKEN_SECRET
+    verification_token_secret = settings.TOKEN_SECRET
 
 
 async def get_user_manager(

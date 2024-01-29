@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from settings import settings
-from user_app.models import User
+from users.models import User
 
 
 DATABASE_URL = settings.DATABASE_URL

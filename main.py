@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
 from settings import settings
-from results_app.router import results_router
-from user_app.router import user_router
+from video_analysis.results.router import results_router
+from users.router import user_router
 
 
 app = FastAPI(title=settings.PROJECT_NAME)
