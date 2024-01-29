@@ -1,1 +1,2 @@
-Generic single-database configuration.
+Alembic is used for migrations handling and its versions.
+All set up is for generic single-database configuration.
