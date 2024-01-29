@@ -7,7 +7,7 @@ from migrations import context
 
 from users.models import Base
 from users.models import *
-from results.models import *
+from video_analysis.results.models import *
 
 
 # this is the Alembic Config object, which provides
