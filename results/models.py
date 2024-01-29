@@ -2,8 +2,8 @@ from sqlalchemy import Column, Integer, String, Enum, ForeignKey, JSON, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from results_app.enums import DetectionStatus
-from user_app.models import Base, User
+from results.enums import DetectionStatus
+from users.models import Base, User
 
 
 class DetectionResult(Base):
@@ -11,7 +11,9 @@ class DetectionResult(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     task_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True))
-    status: Mapped[DetectionStatus] = mapped_column(Enum(DetectionStatus), default=DetectionStatus.PROCESSING)
+    status: Mapped[DetectionStatus] = mapped_column(
+        Enum(DetectionStatus), default=DetectionStatus.PROCESSING
+    )
     result: Mapped[list] = mapped_column(JSON, default=list)
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id"))
 

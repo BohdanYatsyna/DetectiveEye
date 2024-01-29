@@ -13,11 +13,11 @@ from celery_worker.worker import (
     process_video_task, update_detection_result_task
 )
 from db.database import get_async_session
-from results_app import crud, schemas
+from results import crud, schemas
 from service.utils import get_video_paths, get_file_extension
 from service.video_processing import upload_video_to_temp_folder
-from user_app.models import User
-from user_app.users import current_active_user
+from users.models import User
+from users.users import current_active_user
 
 
 results_router = APIRouter()
@@ -73,7 +73,7 @@ async def read_result(
         user: User = Depends(current_active_user),
         db: AsyncSession = Depends(get_async_session)
 ):
-    db_result = await crud.get_detection_result(db, task_id)
+    db_result = await crud.get_detection_result_by_task_id(db, task_id)
 
     if db_result is None:
         raise HTTPException(status_code=404, detail="Result not found")
