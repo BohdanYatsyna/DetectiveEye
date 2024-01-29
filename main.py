@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from core.settings import settings
+from settings import settings
 from results_app.router import results_router
 from user_app.router import user_router
 

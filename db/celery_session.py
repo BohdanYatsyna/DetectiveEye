@@ -2,7 +2,7 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from core.settings import settings
+from settings import settings
 
 
 DATABASE_URL = settings.DATABASE_URL.replace("asyncpg", "psycopg2")
