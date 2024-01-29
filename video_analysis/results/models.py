@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Enum, ForeignKey, JSON, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from results.enums import DetectionStatus
+from video_analysis.results.enums import DetectionStatus
 from users.models import Base, User
 
 

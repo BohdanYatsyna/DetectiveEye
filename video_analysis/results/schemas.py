@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 from uuid import UUID
 
-from results.enums import DetectionStatus
+from video_analysis.results.enums import DetectionStatus
 
 
 class DetectionResultBase(BaseModel):

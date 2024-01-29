@@ -13,7 +13,7 @@ from celery_worker.worker import (
     process_video_task, update_detection_result_task
 )
 from db.database import get_async_session
-from results import crud, schemas
+from video_analysis.results import crud, schemas
 from service.utils import get_video_paths, get_file_extension
 from service.video_processing import upload_video_to_temp_folder
 from users.models import User
