@@ -11,7 +11,7 @@ from fastapi_users.authentication import (
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from db.database import get_user_db
-from user_app.models import User
+from users.models import User
 
 
 SECRET = "SECRET"  # TODO: change to env
