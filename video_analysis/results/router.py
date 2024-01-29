@@ -12,7 +12,7 @@ from uuid import UUID
 from video_analysis.tasks import (
     process_video_task, update_detection_result_task
 )
-from db.database import get_async_session
+from db.async_database_session import get_async_session
 from video_analysis.results import crud, schemas
 from video_analysis.utils import get_video_paths, get_file_extension
 from video_analysis.video_processing import upload_video_to_temp_folder

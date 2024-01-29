@@ -2,7 +2,7 @@ from fastapi import UploadFile
 
 from sqlalchemy.dialects.postgresql import UUID
 from settings import CeleryConfig, celery_instance
-from db.sync_db_session import get_sync_session
+from db.sync_database_session import get_sync_session
 from video_analysis.results.enums import DetectionStatus
 from video_analysis.results.crud import update_detection_result_with_celery
 from video_analysis.video_split import split_video_into_frames
