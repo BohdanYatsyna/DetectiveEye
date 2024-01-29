@@ -1,22 +1,17 @@
-from celery import Celery
 from fastapi import UploadFile
 
 from sqlalchemy.dialects.postgresql import UUID
-from celery_worker.celery_config import CeleryConfig
-from db.celery_session import get_sync_session
-from results_app.enums import DetectionStatus
-from results_app.crud import update_detection_result_with_celery
-from service.video_split import split_video_into_frames
-from service.video_processing import (
+from settings import CeleryConfig, celery_instance
+from db.sync_db_session import get_sync_session
+from video_analysis.results.enums import DetectionStatus
+from video_analysis.results.crud import update_detection_result_with_celery
+from video_analysis.video_split import split_video_into_frames
+from video_analysis.video_processing import (
     clean_up_processed_files, upload_video_to_temp_folder
 )
 
 
-app = Celery("celery_worker")
-app.config_from_object(CeleryConfig)
-
-
-@app.task(bind=True)
+@celery_instance.task(bind=True)
 def process_video_task(
         self, frames_path: str, video_path: str, video_folder_path: str
 ) -> tuple:
@@ -32,7 +27,7 @@ def process_video_task(
         return task_result
 
 
-@app.task
+@celery_instance.task
 def update_detection_result_task(
         task_result: dict
 ) -> str:
