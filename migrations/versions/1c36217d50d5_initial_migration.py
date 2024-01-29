@@ -7,7 +7,7 @@ Create Date: 2024-01-24 14:02:21.262680
 """
 from typing import Sequence, Union
 
-from alembic import op
+from migrations import op
 import sqlalchemy as sa
 
 from fastapi_users_db_sqlalchemy.generics import GUID
