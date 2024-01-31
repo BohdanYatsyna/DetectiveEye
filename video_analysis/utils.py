@@ -1,25 +1,34 @@
+import aiofiles
+import logging
 import os
+import shutil
 import uuid
 
-from settings import settings
 from fastapi import UploadFile
 
-
-def get_file_extension(file: UploadFile) -> str:
-    return file.filename.split(".")[-1].lower()
+from settings import settings
 
 
-def get_uuid_name() -> str:
-    return str(uuid.uuid4())
+async def upload_video_to_temp_folder(video_file: UploadFile) -> str:
+    new_name = f"{str(uuid.uuid4())}.mp4"
+    video_file_full_path = os.path.join(settings.TEMP_VIDEO_FOLDER, new_name)
+
+    async with aiofiles.open(video_file_full_path, "wb") as temp_file:
+        while True:
+            contents = await video_file.read(1024*1024)
+            if not contents:
+                break
+            await temp_file.write(contents)
+
+    return video_file_full_path
 
 
-def get_video_paths() -> tuple:
-    video_folder_name = get_uuid_name()
+def delete_processed_video(video_file_path: str) -> None:
+    if not os.path.isfile(video_file_path):
+        logging.error(
+            f"Unsuccessful attempt to delete video file: '{video_file_path}'"
+        )
 
-    video_folder_path = os.path.join(
-        settings.MEDIA_TEMP, f"{video_folder_name}"
-    )
-    video_path = os.path.join(video_folder_path, f"{video_folder_name}.mp4")
-    frames_path = os.path.join(video_folder_path, "frames")
+    os.remove(video_file_path)
+    logging.info(f"Successfully cleaned up '{video_file_path}'")
 
-    return frames_path, video_path, video_folder_path
