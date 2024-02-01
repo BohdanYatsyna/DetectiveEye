@@ -1,48 +1,46 @@
+import logging
+
 from fastapi import UploadFile
 
-from sqlalchemy.dialects.postgresql import UUID
-from settings import CeleryConfig, celery_instance
 from db.sync_database_session import get_sync_session
+from settings import CeleryConfig, celery_instance
+from video_analysis.objects_detection.detector import Detector
 from video_analysis.results.enums import DetectionStatus
-from video_analysis.results.crud import update_detection_result_with_celery
-from video_analysis.video_split import split_video_into_frames
-from video_analysis.video_processing import (
-    clean_up_processed_files, upload_video_to_temp_folder
-)
+from video_analysis.results.crud import update_detection_result
+from video_analysis.utils import delete_processed_video
+
 
 
 @celery_instance.task(bind=True)
-def process_video_task(
-        self, frames_path: str, video_path: str, video_folder_path: str
-) -> tuple:
-    try:
-        frame_paths = split_video_into_frames(video_path, frames_path)
-        clean_up_processed_files(video_folder_path)
+def detect_objects_on_video_task(self, video_file_path: str) -> dict:
+    detector = Detector()
+    detection_results = detector.detect_objects(video_file_path)
 
-        task_result = {"task_id": self.request.id, "frame_paths": frame_paths}
-        return task_result
+    task_results = {
+        "task_id": self.request.id,
+        "detection_results": detection_results,
+    }
 
-    except Exception as e:
-        task_result = {"task_id": self.request.id, "error": [str(e)]}
-        return task_result
+    delete_processed_video(video_file_path)
+
+    return task_results
 
 
 @celery_instance.task
 def update_detection_result_task(
-        task_result: dict
-) -> str:
+        task_results: dict
+) -> None:
 
     with get_sync_session() as db:
-        error = task_result.get("error")
-        task_id = task_result.get("task_id")
+        detection_results = task_results.get("detection_results")
+        task_id = task_results.get("task_id")
+        status = DetectionStatus.SUCCESS
 
-        if error:
+        if not detection_results:
             status = DetectionStatus.FAILURE
-            result = [error]
-        else:
-            status = DetectionStatus.SUCCESS
-            result = task_result.get("frame_paths")
 
-        update_detection_result_with_celery(db, task_id, status, result)
+        update_detection_result(db, task_id, status, detection_results)
 
-    return f"DetectionResult with task_id: '{task_id}' updated successfully"
+        logging.info(
+            f"Successfully updated DetectionResult with task_id: '{task_id}'"
+        )
