@@ -1,23 +1,27 @@
 import os
 
 from celery import Celery
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from pathlib import Path
 
 
-# TODO: change variables with sensitive info and move to env
+load_dotenv()
+
+
 class Settings(BaseSettings):
     PROJECT_NAME: str = "DetectiveEye"
 
-    DATABASE_URL: str | None = "postgresql+asyncpg://postgres:postgres@192.168.31.136/detect"
-    ROOT_DIR: Path = Path(__file__).resolve().parent.parent
-    MEDIA_TEMP: Path = os.path.join(ROOT_DIR, "media", "temp")
+    DATABASE_URL: str = os.getenv("ENV_DATABASE_URL")
+    ROOT_DIR: Path = Path(__file__).resolve().parent
+    TEMP_VIDEO_FOLDER: Path = os.path.join(ROOT_DIR, "temp_storage")
 
-    TOKEN_SECRET: str = "SECRET"
+    TOKEN_SECRET: str = os.getenv("ENV_TOKEN_SECRET")
 
     class Config:
         case_sensitive = True
         env_file = ".env"
+        extra = "ignore"
 
 
 settings = Settings()
@@ -25,8 +29,8 @@ settings = Settings()
 
 # For Celery, as tool for distributed tasks execution used in video_analysis
 class CeleryConfig:
-    broker_url = "redis://localhost:6379/0"
-    result_backend = "redis://localhost:6379/0"
+    broker_url = os.getenv("ENV_BROKER_URL")
+    result_backend = os.getenv("ENV_RESULT_BACKEND")
     broker_connection_retry_on_startup = True
 
 
