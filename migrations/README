@@ -1,0 +1,2 @@
+This folder is for migrations handling and its versioning with Alembic.
+All set up is for generic single-database configuration.
