@@ -1,0 +1,10 @@
+.github
+.idea/
+.vscode/
+.env
+venv/
+
+.python-version/
+**__pycache__/
+
+media/outline/
