@@ -1,6 +1,3 @@
-import shutil
-import os
-
 from celery import chain
 from fastapi import (
     APIRouter, Depends, HTTPException, File, UploadFile
@@ -10,12 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 
 from video_analysis.tasks import (
-    process_video_task, update_detection_result_task
+    detect_objects_on_video_task, update_detection_result_task
 )
 from db.async_database_session import get_async_session
 from video_analysis.results import crud, schemas
-from video_analysis.utils import get_video_paths, get_file_extension
-from video_analysis.video_processing import upload_video_to_temp_folder
+from video_analysis.utils import upload_video_to_temp_folder
 from users.models import User
 from users.users import current_active_user
 
@@ -26,24 +22,22 @@ results_router = APIRouter()
 @results_router.post(
     "/detect_objects/", response_model=schemas.DetectionResult
 )
-async def upload_video_for_detecting_objects(
+async def upload_video_to_start_detecting_objects(
         video_file: UploadFile = File(...),
         db: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_active_user),
 ):
-    file_extension = get_file_extension(video_file)
 
-    if file_extension != "mp4":
+    if video_file.filename.split(".")[-1].lower() != "mp4":
         raise HTTPException(
             status_code=400,
             detail="Invalid file type. Only '.mp4' video files are allowed."
         )
 
-    frames_path, video_path, video_folder_path = get_video_paths()
-    await upload_video_to_temp_folder(video_file, video_path)
+    uploaded_video_path = await upload_video_to_temp_folder(video_file)
 
     task_chain = chain(
-        process_video_task.s(frames_path, video_path, video_folder_path),
+        detect_objects_on_video_task.s(uploaded_video_path),
         update_detection_result_task.s()
     )
     result = task_chain.apply_async()
@@ -68,7 +62,7 @@ async def read_results(
 @results_router.get(
     "/results/{task_id}", response_model=schemas.DetectionResult
 )
-async def read_result(
+async def read_result_by_task_id(
         task_id: UUID,
         user: User = Depends(current_active_user),
         db: AsyncSession = Depends(get_async_session)
