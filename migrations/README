@@ -1,2 +1,0 @@
-For migrations handling and its versions Alembic is used.
-All set up is for generic single-database configuration.
