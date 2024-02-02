@@ -1,6 +1,5 @@
 import cv2
 import logging
-import time
 
 from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
@@ -15,8 +14,6 @@ logging.basicConfig(
 
 class Detector:
     def __init__(self):
-        logging.info("Initializing the detector.")
-
         self.configurations = get_cfg()
 
         # Specifying exact Detectron2 model settings file
@@ -40,14 +37,10 @@ class Detector:
         self.model_metadata = MetadataCatalog.get("coco_2017_train")
         self.objects_names = self.model_metadata.get("thing_classes")
 
-        logging.info("Detector initialized successfully.")
-
     def detect_objects(self, video_path: str) -> list:
-        start_time = time.time()
         logging.info(f"Starting to process video: {video_path}")
 
         video_object = cv2.VideoCapture(video_path)
-
         if not video_object.isOpened():
             logging.error(f"Failed to open video file: {video_path}")
             return []
@@ -60,11 +53,7 @@ class Detector:
             if not success:
                 break  # Break the loop when there are no frames left
 
-            detection_start_time = time.time()
-
-
             frames_count += 1
-            logging.info(f"Processing frame {frames_count}")
 
             # Convert frame from BGR to RGB
             frame_rgb = frame[:, :, ::-1]
@@ -72,21 +61,12 @@ class Detector:
             # Perform object detection on single frame
             frame_detection_outputs = self.predictor(frame_rgb)
 
-
-            detection_end_time = time.time()
-            logging.info(
-                f"Frame processing time: "
-                f"{detection_end_time - detection_start_time:.2f} seconds"
-            )
-
-
             predicted_objects_names = frame_detection_outputs[
                 "instances"
             ].pred_classes.tolist()
             prediction_accuracy = frame_detection_outputs[
                 "instances"
             ].scores.tolist()
-
             single_image_results = [
                 (self.objects_names[name], round(prediction_accuracy[index], 4))
                 for index, name in enumerate(predicted_objects_names)
@@ -98,7 +78,5 @@ class Detector:
         cv2.destroyAllWindows()
 
         logging.info(f"Finished detecting objects. Total frames processed: {frames_count}")
-        end_time = time.time()
-        logging.info(f"Total processing time: {end_time - start_time:.2f} seconds")
 
         return detection_results
