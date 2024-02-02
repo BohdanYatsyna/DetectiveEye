@@ -67,4 +67,4 @@ docker-compose up --build
 
 # 🕶 DEMO
 ### Documentation with all endpoints:
-![sample_DOCUMENTATION](samples_for_readme/sample_DOCUMENTATION.PNG)
+![sample_DOCUMENTATION](samples_for_readme/sample_DOCUMENTATION.png)
