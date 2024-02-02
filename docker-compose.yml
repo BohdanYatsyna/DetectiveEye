@@ -4,8 +4,6 @@ services:
   db:
     restart: on-failure
     image: postgres:16-alpine
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
     env_file:
@@ -25,6 +23,9 @@ services:
       - .env
     depends_on:
       - db
+    volumes:
+      - ./:/DetectiveEye
+      - video_files_volume:/DetectiveEye/temp_storage
 
   redis:
     restart: on-failure
@@ -44,6 +45,8 @@ services:
       - redis
       - db
     restart: on-failure
+    volumes:
+      - video_files_volume:/DetectiveEye/temp_storage
 
-  volumes:
-    postgres_data:
+volumes:
+  video_files_volume:
