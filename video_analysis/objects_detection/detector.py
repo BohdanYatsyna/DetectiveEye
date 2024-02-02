@@ -7,7 +7,7 @@ from detectron2.config import get_cfg
 from detectron2 import model_zoo
 from detectron2.data import MetadataCatalog
 
-# Configure logging
+
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -97,10 +97,8 @@ class Detector:
         video_object.release()
         cv2.destroyAllWindows()
 
-        logging.info(f"Finished processing video: {video_path}. Total frames processed: {frames_count}")
+        logging.info(f"Finished detecting objects. Total frames processed: {frames_count}")
         end_time = time.time()
         logging.info(f"Total processing time: {end_time - start_time:.2f} seconds")
 
         return detection_results
-
-default_detector = Detector()
