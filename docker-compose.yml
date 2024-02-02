@@ -46,6 +46,7 @@ services:
       - db
     restart: on-failure
     volumes:
+      - ./:/DetectiveEye
       - video_files_volume:/DetectiveEye/temp_storage
 
 volumes:
