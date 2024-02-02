@@ -1,4 +1,5 @@
 import os
+import logging
 
 from celery import Celery
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ from pathlib import Path
 load_dotenv()
 
 
+# FastAPI settings
 class Settings(BaseSettings):
     PROJECT_NAME: str = "DetectiveEye"
 
@@ -36,3 +38,10 @@ class CeleryConfig:
 
 celery_instance = Celery("video_analysing")
 celery_instance.config_from_object(CeleryConfig)
+
+
+# Logs configuration
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+

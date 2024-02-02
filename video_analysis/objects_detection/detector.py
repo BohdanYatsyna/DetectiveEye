@@ -7,11 +7,6 @@ from detectron2 import model_zoo
 from detectron2.data import MetadataCatalog
 
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-
 class Detector:
     def __init__(self):
         self.configurations = get_cfg()
