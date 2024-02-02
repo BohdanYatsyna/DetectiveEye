@@ -9,4 +9,4 @@ app = FastAPI(title=settings.PROJECT_NAME)
 
 
 app.include_router(user_router)
-app.include_router(results_router, tags=["results"])
+app.include_router(results_router, tags=["Objects detection"])
