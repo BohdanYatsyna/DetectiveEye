@@ -2,7 +2,6 @@ from celery import chain
 from fastapi import (
     APIRouter, Depends, HTTPException, File, UploadFile
 )
-from fastapi_users import FastAPIUsers
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 
@@ -49,7 +48,7 @@ async def upload_video_to_start_detecting_objects(
     return new_detection_result
 
 
-@results_router.get("/results/", response_model=list[schemas.DetectionResult])
+@results_router.get("/detection_results/", response_model=list[schemas.DetectionResult])
 async def read_results(
         user: User = Depends(current_active_user),
         db: AsyncSession = Depends(get_async_session)
@@ -60,7 +59,7 @@ async def read_results(
 
 
 @results_router.get(
-    "/results/{task_id}", response_model=schemas.DetectionResult
+    "/detection_results/{task_id}", response_model=schemas.DetectionResult
 )
 async def read_result_by_task_id(
         task_id: UUID,

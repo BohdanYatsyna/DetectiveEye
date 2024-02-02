@@ -1,7 +1,6 @@
 import uuid
-from typing import Optional
 
-from fastapi import Depends, Request
+from fastapi import Depends
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
 from fastapi_users.authentication import (
     AuthenticationBackend,
@@ -31,7 +30,7 @@ async def get_user_manager(
     yield UserManager(user_db)
 
 
-bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
+bearer_transport = BearerTransport(tokenUrl="/login")
 
 
 def get_jwt_strategy() -> JWTStrategy:

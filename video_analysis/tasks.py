@@ -1,14 +1,11 @@
 import logging
 
-from fastapi import UploadFile
-
 from db.sync_database_session import get_sync_session
-from settings import CeleryConfig, celery_instance
+from settings import celery_instance
 from video_analysis.objects_detection.detector import Detector
 from video_analysis.results.enums import DetectionStatus
 from video_analysis.results.crud import update_detection_result
 from video_analysis.utils import delete_processed_video
-
 
 
 @celery_instance.task(bind=True)

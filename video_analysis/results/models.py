@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Enum, ForeignKey, JSON, Text
+from sqlalchemy import Enum, ForeignKey, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,4 +17,6 @@ class DetectionResult(Base):
     result: Mapped[list] = mapped_column(JSON, default=list)
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id"))
 
-    user: Mapped[User] = relationship("User", back_populates="detection_results")
+    user: Mapped[User] = relationship(
+        "User", back_populates="detection_results"
+    )

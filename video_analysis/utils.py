@@ -1,7 +1,6 @@
 import aiofiles
 import logging
 import os
-import shutil
 import uuid
 
 from fastapi import UploadFile
@@ -15,7 +14,7 @@ async def upload_video_to_temp_folder(video_file: UploadFile) -> str:
 
     async with aiofiles.open(video_file_full_path, "wb") as temp_file:
         while True:
-            contents = await video_file.read(1024*1024)
+            contents = await video_file.read(1024 * 1024)
             if not contents:
                 break
             await temp_file.write(contents)
@@ -31,4 +30,3 @@ def delete_processed_video(video_file_path: str) -> None:
 
     os.remove(video_file_path)
     logging.info(f"Successfully cleaned up '{video_file_path}'")
-
