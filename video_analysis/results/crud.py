@@ -24,17 +24,21 @@ async def create_detection_result(
 
 
 async def get_detection_result_by_task_id(db: AsyncSession, task_id: UUID):
-    db_detection_result = await db.execute(select(models.DetectionResult).where(
-        models.DetectionResult.task_id == task_id
-    ))
+    db_detection_result = await db.execute(
+        select(models.DetectionResult).where(
+            models.DetectionResult.task_id == task_id
+        )
+    )
 
     return db_detection_result.scalar_one_or_none()
 
 
 async def get_user_detection_results(db: AsyncSession, user_id: UUID):
-    db_detection_results = await db.execute(select(models.DetectionResult).where(
-        models.DetectionResult.user_id == user_id
-    ))
+    db_detection_results = await db.execute(
+        select(models.DetectionResult).where(
+            models.DetectionResult.user_id == user_id
+        )
+    )
 
     return db_detection_results.scalars().all()
 

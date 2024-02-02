@@ -63,7 +63,10 @@ class Detector:
                 "instances"
             ].scores.tolist()
             single_image_results = [
-                (self.objects_names[name], round(prediction_accuracy[index], 4))
+                (
+                    self.objects_names[name],
+                    round(prediction_accuracy[index], 4)
+                )
                 for index, name in enumerate(predicted_objects_names)
             ]
 
@@ -72,6 +75,9 @@ class Detector:
         video_object.release()
         cv2.destroyAllWindows()
 
-        logging.info(f"Finished detecting objects. Total frames processed: {frames_count}")
+        logging.info(
+            f"Finished detecting objects."
+            f" Total frames processed: {frames_count}"
+        )
 
         return detection_results

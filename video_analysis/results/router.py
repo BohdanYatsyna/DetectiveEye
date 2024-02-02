@@ -48,7 +48,9 @@ async def upload_video_to_start_detecting_objects(
     return new_detection_result
 
 
-@results_router.get("/detection_results/", response_model=list[schemas.DetectionResult])
+@results_router.get(
+    "/detection_results/", response_model=list[schemas.DetectionResult]
+)
 async def read_results(
         user: User = Depends(current_active_user),
         db: AsyncSession = Depends(get_async_session)
