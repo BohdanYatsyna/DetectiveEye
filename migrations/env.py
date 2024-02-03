@@ -7,7 +7,7 @@ from alembic import context
 
 from users.models import Base
 from users.models import *
-from video_analysis.results.models import *
+from video_analysis.detection_results.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from video_analysis.results.enums import DetectionStatus
-from video_analysis.results import models
+from video_analysis.detection_results.enums import DetectionStatus
+from video_analysis.detection_results import models
 
 
 async def create_detection_result(

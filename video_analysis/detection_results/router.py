@@ -9,7 +9,7 @@ from video_analysis.tasks import (
     detect_objects_on_video_task, update_detection_result_task
 )
 from db.async_database_session import get_async_session
-from video_analysis.results import crud, schemas
+from video_analysis.detection_results import crud, schemas
 from video_analysis.utils import upload_video_to_temp_folder
 from users.models import User
 from users.users import current_active_user
