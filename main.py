@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from settings import settings
-from video_analysis.results.router import results_router
+from video_analysis.detection_results.router import results_router
 from users.router import user_router
 
 
