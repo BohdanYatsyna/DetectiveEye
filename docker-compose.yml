@@ -15,7 +15,8 @@ services:
       context: .
       dockerfile: Dockerfile
     command:
-      sh -c "alembic upgrade head &&
+      sh -c "mkdir -p /DetectiveEye/temp_storage &&
+      alembic upgrade head &&
       uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
