@@ -3,8 +3,6 @@
 .vscode/
 .env
 venv/
-
 .python-version/
 **__pycache__/
-
 samples_for_readme/
