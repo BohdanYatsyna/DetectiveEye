@@ -1,32 +1,60 @@
 import aiofiles
-import logging
 import os
 import uuid
 
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
 
 from settings import settings
+from video_analysis.exceptions import FileDeleteError
 
 
-async def upload_video_to_temp_folder(video_file: UploadFile) -> str:
-    new_name = f"{str(uuid.uuid4())}.mp4"
-    video_file_full_path = os.path.join(settings.TEMP_VIDEO_FOLDER, new_name)
-
-    async with aiofiles.open(video_file_full_path, "wb") as temp_file:
-        while True:
-            contents = await video_file.read(1024 * 1024)
-            if not contents:
-                break
-            await temp_file.write(contents)
-
-    return video_file_full_path
+def get_file_extension(file: UploadFile) -> str:
+    file_extension = file.filename.split(".")[-1].lower()
+    return file_extension
 
 
-def delete_processed_video(video_file_path: str) -> None:
-    if not os.path.isfile(video_file_path):
-        logging.error(
-            f"Unsuccessful attempt to delete video file: '{video_file_path}'"
+def pass_file_extension_check(file: UploadFile) -> bool:
+    file_extension = get_file_extension(file)
+    return file_extension in settings.SUPPORTED_FILE_EXTENSIONS
+
+
+def create_temporary_file_path(file: UploadFile) -> str:
+    file_extension = get_file_extension(file)
+    temporary_file_name = str(uuid.uuid4())
+    temporary_file_path = os.path.join(
+        settings.TEMP_FOLDER,
+        f"{temporary_file_name}.{file_extension}"
+    )
+    return temporary_file_path
+
+
+async def upload_file_to_temp_folder(file: UploadFile) -> str:
+    upload_path = create_temporary_file_path(file)
+
+    try:
+        async with aiofiles.open(upload_path, "wb") as temp_file:
+            while True:
+                contents = await file.read(1024 * 1024)
+                if not contents:
+                    break
+                await temp_file.write(contents)
+
+    except PermissionError:
+        raise HTTPException(
+            status_code=500,
+            detail="File permission error occurred"
+        )
+    except IOError:
+        raise HTTPException(
+            status_code=500,
+            detail="Error with reading/writing the file, please try again"
         )
 
-    os.remove(video_file_path)
-    logging.info(f"Successfully cleaned up '{video_file_path}'")
+    return upload_path
+
+
+def delete_file(file_path: str) -> None:
+    try:
+        os.remove(file_path)
+    except OSError as error:
+        raise FileDeleteError(file_path, error)
