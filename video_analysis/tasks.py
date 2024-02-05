@@ -17,7 +17,7 @@ def delete_video_after_detecting_task(video_file_path: str) -> None:
     delete_file(video_file_path)
 
 
-class DetectionTaskCallback(Task):
+class ObjectsDetectionTask(Task):
     def after_return(
             self,
             status: str,
@@ -74,7 +74,7 @@ class DetectionTaskCallback(Task):
 
 
 @celery_instance.task(
-    bind=True, base=DetectionTaskCallback
+    bind=True, base=ObjectsDetectionTask
 )
 def detect_objects_on_video_task(self, video_file_path: str) -> list:
     detection_results = (
