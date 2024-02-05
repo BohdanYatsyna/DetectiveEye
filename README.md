@@ -59,9 +59,8 @@ docker-compose up --build
 
 #### 🗝 Important note.
 #### For using GPU (CUDA support required) with Detectron2 it is needed to update:
--         In ./objects_detection/detector.py self.configurations.MODEL.DEVICE set to "gpu"
+-         Add to .env 'ENV_DETECTRON2_DEVICE=gpu'
 -         Replace in ./Dockerfile "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu" with "pip3 install torch torchvision torchaudio"
--         self.configurations.MODEL.DEVICE set to "gpu" in ./objects_detection/detector.py
 
 # 🕶 DEMO
 ### Documentation with all endpoints:
