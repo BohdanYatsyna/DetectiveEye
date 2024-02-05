@@ -13,7 +13,7 @@ class FrameObjectDetector(ABC):
     def detect_objects_on_frame(
             self, frame: bytearray
     ) -> list[tuple[str | None, float | None] | None]:
-        pass
+        """Detect objects on single frame"""
 
 
 class Detectron2FrameObjectsDetector(FrameObjectDetector):

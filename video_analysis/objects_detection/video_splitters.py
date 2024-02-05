@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 class VideoSplitter(ABC):
     @abstractmethod
     def split_video_into_frames(self, video_path: str) -> bytearray:
-        pass
+        """Split video into frames and yield frame-by-frame"""
 
 
 class OpenCVVideoSplitter(VideoSplitter):
