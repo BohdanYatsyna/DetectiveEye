@@ -29,7 +29,7 @@ def create_temporary_file_path(file: UploadFile) -> str:
     return temporary_file_path
 
 
-async def upload_file_to_temp_folder(file: UploadFile) -> str:
+async def upload_file(file: UploadFile) -> str:
     upload_path = create_temporary_file_path(file)
 
     try:

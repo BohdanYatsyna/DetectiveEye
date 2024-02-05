@@ -11,7 +11,7 @@ from db.async_database_session import get_async_session
 from settings import settings
 from video_analysis.detection_results import crud, schemas
 from video_analysis.utils import (
-    pass_file_extension_check, upload_file_to_temp_folder
+    pass_file_extension_check, upload_file
 )
 from users.models import User
 from users.users import current_active_user
@@ -38,7 +38,7 @@ async def upload_video_to_start_detecting_objects(
             )
         )
 
-    uploaded_video_path = await upload_file_to_temp_folder(video_file)
+    uploaded_video_path = await upload_file(video_file)
 
     detection_task = detect_objects_on_video_task.apply_async(
         args=[uploaded_video_path]
