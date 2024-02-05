@@ -38,7 +38,8 @@ class DetectionTaskCallback(Task):
                 db, task_id, DetectionStatus.SUCCESS, return_value
             )
 
-    def get_error_message(self, exception: Exception) -> list[str]:
+    @staticmethod
+    def get_error_message(exception: Exception) -> list[str]:
         if isinstance(exception, FileNotFoundError):
             error_message = [
                 f"{str(exception)}. Try to upload video again"
