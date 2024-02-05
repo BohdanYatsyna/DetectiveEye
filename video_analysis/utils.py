@@ -1,6 +1,6 @@
-import errno
-
 import aiofiles
+import errno
+import logging
 import os
 import uuid
 
@@ -46,6 +46,7 @@ async def upload_file(file: UploadFile) -> str:
             detail="File permission error occurred"
         )
     except OSError as error:
+        logging.error(f"File upload error: {error}")
         if error.errno == errno.ENOSPC:
             raise HTTPException(
                 status_code=507,
