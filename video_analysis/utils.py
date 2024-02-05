@@ -5,7 +5,6 @@ import uuid
 from fastapi import UploadFile, HTTPException
 
 from settings import settings
-from video_analysis.exceptions import FileDeleteError
 
 
 def get_file_extension(file: UploadFile) -> str:
@@ -54,7 +53,4 @@ async def upload_file_to_temp_folder(file: UploadFile) -> str:
 
 
 def delete_file(file_path: str) -> None:
-    try:
-        os.remove(file_path)
-    except OSError as error:
-        raise FileDeleteError(file_path, error)
+    os.remove(file_path)
