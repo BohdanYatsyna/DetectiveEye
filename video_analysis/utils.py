@@ -1,3 +1,5 @@
+import errno
+
 import aiofiles
 import os
 import uuid
@@ -43,11 +45,17 @@ async def upload_file_to_temp_folder(file: UploadFile) -> str:
             status_code=500,
             detail="File permission error occurred"
         )
-    except IOError:
+    except OSError as error:
+        if error.errno == errno.ENOSPC:
+            raise HTTPException(
+                status_code=507,
+                detail="Server storage is full, please try again later"
+            )
+
         raise HTTPException(
-            status_code=500,
-            detail="Error with reading/writing the file, please try again"
-        )
+                status_code=500,
+                detail="Unexpected error with uploading, please try again"
+            )
 
     return upload_path
 
