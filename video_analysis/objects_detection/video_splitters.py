@@ -13,7 +13,6 @@ class OpenCVVideoSplitter(VideoSplitter):
     def split_video_into_frames(self, video_path: str) -> bytearray:
         video_object = cv2.VideoCapture(video_path)
         if not video_object.isOpened():
-            cv2.destroyAllWindows()
             raise FileNotFoundError("Failed to open video file")
 
         try:
