@@ -4,9 +4,13 @@ from celery import Task
 
 from db.sync_database_session import get_sync_session
 from settings import celery_instance
-from video_analysis.detection_results.enums import DetectionStatus
+from video_analysis.detection_results.enums import (
+    DetectionStatus, ObjectsDetectorChoice
+)
 from video_analysis.objects_detection.video_detectors import (
-    DEFAULT_VIDEO_OBJECTS_DETECTOR
+    DEFAULT_DETECTRON2_OBJECTS_DETECTOR,
+    DEFAULT_YOLOv8_OBJECTS_DETECTOR,
+    VideoObjectDetector
 )
 from video_analysis.utils import delete_file
 from video_analysis.detection_results.crud import update_detection_result
@@ -72,15 +76,23 @@ class ObjectsDetectionTask(Task):
                 db, task_id, DetectionStatus.FAILURE, error_message
             )
 
+    @staticmethod
+    def get_object_detector(detector_choice: str) -> VideoObjectDetector:
+        if detector_choice == ObjectsDetectorChoice.DEFAULT_DETECTRON2.value:
+            detector = DEFAULT_DETECTRON2_OBJECTS_DETECTOR
+        elif detector_choice == ObjectsDetectorChoice.DEFAULT_YOLOv8.value:
+            detector = DEFAULT_YOLOv8_OBJECTS_DETECTOR
+
+        return detector
+
 
 @celery_instance.task(
     bind=True, base=ObjectsDetectionTask
 )
-def detect_objects_on_video_task(self, video_file_path: str) -> list:
-    detection_results = (
-        DEFAULT_VIDEO_OBJECTS_DETECTOR.detect_all_objects_on_video(
-            video_file_path
-        )
-    )
+def object_detection_on_video_task(
+        self, video_file_path: str, detector_choice: str
+) -> list:
+    detector = self.get_object_detector(detector_choice)
+    detection_results = detector.detect_all_objects_on_video(video_file_path)
 
     return detection_results
