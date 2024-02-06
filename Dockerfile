@@ -10,7 +10,9 @@ WORKDIR /DetectiveEye
 
 COPY . /DetectiveEye
 
-RUN pip install --upgrade pip && \
+RUN apt-get update && \
+    apt-get -y install libpq-dev gcc g++ git libgl1-mesa-glx libglib2.0-0 libgtk2.0-0 && \
+    pip install --upgrade pip && \
     pip install -r requirements.txt && \
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu && \
 #     Replace the above line with the next command if you have CUDA support.
