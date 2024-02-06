@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     SUPPORTED_FILE_EXTENSIONS: list[str] = ["mp4"]
     TOKEN_SECRET: str = os.getenv("ENV_TOKEN_SECRET")
 
+    # DETECTRON2 DEFAULT SETTINGS:
     # Specifying exact Detectron2 model settings file
     DETECTRON2_MODEL_CONFIG: str = os.getenv(
         "ENV_DETECTRON2_MODEL_CONFIG",
@@ -36,6 +37,21 @@ class Settings(BaseSettings):
     DETECTRON2_DEVICE: str = os.getenv(
         "ENV_DETECTRON2_DEVICE", "cpu"
     )
+
+    # YOLOv8 DEFAULT SETTINGS:
+    # Specifying exact YOLOv8 model
+    YOLOv8_MODEL: str = os.getenv(
+        "ENV_YOLOv8_MODEL",
+        "yolov8n.pt"
+    )
+    # Choosing CPU or GPU mode ("device=gpu" or "device=cpu")
+    YOLOv8_DEVICE: str = os.getenv(
+        "ENV_YOLOv8_DEVICE", "cpu"
+    )
+    # Set threshold for the model to show results with above prediction score
+    YOLOv8_SCORE_THRESH_TEST: float = float(os.getenv(
+        "ENV_YOLOv8_SCORE_THRESH_TEST", "0.5"
+    ))
 
     class Config:
         case_sensitive = True
