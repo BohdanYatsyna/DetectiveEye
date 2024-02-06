@@ -54,9 +54,9 @@ async def upload_file(file: UploadFile) -> str:
             )
 
         raise HTTPException(
-                status_code=500,
-                detail="Unexpected error with uploading, please try again"
-            )
+            status_code=500,
+            detail="Unexpected error with uploading, please try again"
+        )
 
     return upload_path
 
