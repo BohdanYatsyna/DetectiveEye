@@ -1,11 +1,12 @@
 from fastapi import (
-    APIRouter, Depends, HTTPException, File, UploadFile
+    APIRouter, Depends, HTTPException, File, UploadFile, Query
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 
+from video_analysis.detection_results.enums import ObjectsDetectorChoice
 from video_analysis.tasks import (
-    detect_objects_on_video_task
+    object_detection_on_video_task
 )
 from db.async_database_session import get_async_session
 from settings import settings
@@ -25,6 +26,9 @@ results_router = APIRouter()
 )
 async def upload_video_to_start_detecting_objects(
         video_file: UploadFile = File(...),
+        objects_detector: ObjectsDetectorChoice = Query(
+            default=ObjectsDetectorChoice.DEFAULT_DETECTRON2
+        ),
         db: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_active_user),
 ):
@@ -40,8 +44,8 @@ async def upload_video_to_start_detecting_objects(
 
     uploaded_video_path = await upload_file(video_file)
 
-    detection_task = detect_objects_on_video_task.apply_async(
-        args=[uploaded_video_path]
+    detection_task = object_detection_on_video_task.apply_async(
+        args=[uploaded_video_path, objects_detector.value]
     )
     detection_result_in_processing = await crud.create_detection_result(
         db, task_id=detection_task.id, user_id=user.id
