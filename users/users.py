@@ -1,7 +1,10 @@
 import uuid
+from typing import Union
 
 from fastapi import Depends
-from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
+from fastapi_users import (
+    BaseUserManager, InvalidPasswordException, FastAPIUsers, UUIDIDMixin
+)
 from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,
@@ -13,11 +16,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.async_database_session import get_async_session
 from settings import settings
 from users.models import User
+from users.schemas import UserCreate
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     reset_password_token_secret = settings.TOKEN_SECRET
     verification_token_secret = settings.TOKEN_SECRET
+
+    async def validate_password(
+            self,
+            password: str,
+            user: Union[UserCreate, User],
+    ) -> None:
+        if len(password) < 8:
+            raise InvalidPasswordException(
+                reason="Password should be at least 8 characters"
+            )
+        if user.email in password:
+            raise InvalidPasswordException(
+                reason="Password should not contain e-mail"
+            )
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
