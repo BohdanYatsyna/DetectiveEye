@@ -9,9 +9,9 @@ user_router = APIRouter()
 
 user_router.include_router(
     fastapi_users.get_auth_router(auth_backend),
-    tags=["auth"]
+    tags=["Accounts"]
 )
 user_router.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
-    tags=["auth"],
+    tags=["Accounts"],
 )
