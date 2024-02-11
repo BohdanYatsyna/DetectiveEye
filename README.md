@@ -2,8 +2,11 @@
 ___
 #### API for detecting objects on video and returning understandable results. Users are required to register and log in to access the API's functionality.To initiate object detection on video, user upload MP4 video file, choose ObjectsDetector and receives DetectionResult instance with status Processing and task_id mentioned. Object detection is handling in background and user can check status using task_id.  
 ___
+<div> <a href="https://www.loom.com/share/7d82ea6168e64248b4d7abfaae0d7012"> <p>Watch Video Presentation</p> </a> <a href="https://www.loom.com/share/7d82ea6168e64248b4d7abfaae0d7012"> <img style="max-width:800px;" src="https://cdn.loom.com/sessions/thumbnails/7d82ea6168e64248b4d7abfaae0d7012-with-play.gif"> </a> </div>
+
 # Project Architecture
 ![project_architecture](samples_for_readme/project_architecture.png)
+
 
 ## 🔧 Technologies used:
 ___
